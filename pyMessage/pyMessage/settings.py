@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'channels',
     'accounts',
     'gui',
+    'messaging',
 ]
 
 AUTH_USER_MODEL = 'accounts.MyUser'
@@ -73,7 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pyMessage.wsgi.application'
-
+ASGI_APPLICATION = 'pyMessage.routing.application'  # Add this line for Django Channels
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
