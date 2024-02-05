@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-from .models import MyUser
+from .models import MyUser, UserProfilePic
 
 class MyUserCreationForm(UserCreationForm):
     first_name = forms.CharField(label=('First Name:'), max_length=25, required=True,
@@ -25,8 +25,8 @@ class MyUserCreationForm(UserCreationForm):
 class MyUserChangeForm(UserChangeForm):
         
     class Meta:
-        model = MyUser
-        fields = ('first_name', 'last_name', 'phone', 'email')
+        models = MyUser, UserProfilePic,
+        fields = ('profile_picture', 'first_name', 'last_name', 'phone', 'email')
 
 class MyUserLoginForm(AuthenticationForm):
     username = forms.CharField(label='Phone/Email:', max_length=50, required=True,
@@ -38,3 +38,11 @@ class MyUserLoginForm(AuthenticationForm):
                                widget=forms.PasswordInput(attrs={'class': 'textBox',
                                                                  'placeholder': 'Password',
                                                                 }))
+    
+class AddProfilePicForm(forms.ModelForm):
+    profile_picture = forms.ImageField(label=('Profile Picture:'), required=False, 
+                                       widget=forms.FileInput())
+    
+    class Meta:
+        model = UserProfilePic
+        fields = ('profile_picture',)

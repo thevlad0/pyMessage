@@ -1,7 +1,46 @@
 {% extends "base.html" %}
 
+
+{% load static %}
 {% block content %}
-    <p>
-        Hello, World!
-    </p>
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}">
+<div class="section-container">
+    <section class="friends-section" id="friends-section">
+        <h1>Chats</h1>
+        <input class="search" id="search" type="text" placeholder="Find your friend!!!">
+        <div class="container" id="container">
+            {% for friend in friends %}
+            <div class="friend-container" id="friend-container">
+                <div class="user-image" id="user-image">
+                    <img class="userImg" src="{{ friend.picture }}" alt="">
+                </div>
+                <div class="user-image" id="user-name">
+                    <h3>{{ friend.name }}</h3>
+                    <p class="message">That shows last mesage!!!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="chat-section" id="chat-section">
+        <div class="chat-buttons-container" id="chat-buttons-container">
+            <div class="chat-buttons" id="chat-buttons">
+                <input type="text" placeholder="Type something!">
+            </div>
+        </div>
+    </section>
+    <section class="options-section" id="options-section">
+        <div class="options-container">
+            <div class="user-image-options">
+                <img class="userImg" src="{{ user.picture }}" alt="">
+                <h3>{{ user.name }}</h3>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="{% static 'js/chat.js' %}"></script>
+<script src="{% static 'js/search.js' %}"></script>
+
 {% endblock %}

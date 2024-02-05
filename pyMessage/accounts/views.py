@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from .forms import MyUserCreationForm, MyUserLoginForm
+from .forms import MyUserCreationForm, MyUserLoginForm, AddProfilePicForm
 from .utils import *
 from .models import MyUser
 
@@ -12,10 +12,21 @@ def register(request):
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('/register/profile_pic')
     else:
         form = MyUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
+def profile_pic(request):
+    if request.method == 'POST':
+        form = AddProfilePicForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = AddProfilePicForm(instance=request.user)
+        
+    return render(request, 'profile_pic.html', {'form': form})
 
 def login_view(request):
     if request.method == "POST":

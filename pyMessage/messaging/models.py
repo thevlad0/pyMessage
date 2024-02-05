@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from accounts.models import MyUser
 
@@ -6,8 +7,16 @@ class Friends(models.Model):
     friends = models.JSONField()
     
     @staticmethod
+    def get_friends(user):
+        try:
+            friends = Friends.objects.get(owner=user).friends
+            return friends
+        except:
+            return {}
+    
+    @staticmethod
     def add_friend(user, friend):
-        friends_dict = user.friends
+        friends_dict = Friends.get_friends(user)
         friends_dict[friend.id] = friend.get_data['name']
         user.save()
         
