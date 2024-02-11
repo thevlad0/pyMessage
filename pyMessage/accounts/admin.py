@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import MyUserCreationForm, MyUserChangeForm
-from .models import MyUser, UserProfilePic
+from .models import MyUser
 
 # Register your models here.
 
@@ -12,7 +12,7 @@ class MyAdmin(UserAdmin):
 
     model = MyUser
 
-    list_display = ('profile_picture', 'name', 'username', 'is_active',
+    list_display = ('name', 'username', 'is_active',
                     'is_staff', 'is_superuser', 'last_login')
     list_filter = ('is_active', 'is_staff', 'is_superuser')
     fieldsets = (

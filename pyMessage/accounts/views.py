@@ -12,6 +12,7 @@ def register(request):
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            login(request, form.instance)
             return redirect('/register/profile_pic')
     else:
         form = MyUserCreationForm()
@@ -19,12 +20,13 @@ def register(request):
 
 def profile_pic(request):
     if request.method == 'POST':
-        form = AddProfilePicForm(request.POST, request.FILES, instance=request.user)
+        form = AddProfilePicForm(request.POST, request.FILES)
+        form.instance.user = request.user
         if form.is_valid():
             form.save()
             return redirect('/')
     else:
-        form = AddProfilePicForm(instance=request.user)
+        form = AddProfilePicForm()
         
     return render(request, 'profile_pic.html', {'form': form})
 

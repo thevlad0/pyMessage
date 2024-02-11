@@ -1,0 +1,84 @@
+.invitation-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.invitation-container {
+    width: 90%;
+    max-width: 550px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    border-radius: 8px;
+    overflow: auto;
+}
+
+.invitation-container h2{
+    text-align: center;
+}
+
+.invitation-box {
+    max-height: 500px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.invitation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-details {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjusts space between image and name */
+}
+
+.user-image img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.user-name h3 {
+    margin: 0;
+}
+
+.invitation-actions {
+    display: flex;
+}
+
+.btn {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.accept {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.decline {
+    background-color: #f44336;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .user-image img {
+        width: 50px;
+        height: 50px;
+    }
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}

@@ -1,42 +1,11 @@
-import json
 from django.db import models
 from accounts.models import MyUser
-
-class Friends(models.Model):
-    owner = models.ForeignKey(MyUser, related_name='friends', on_delete=models.CASCADE)
-    friends = models.JSONField()
-    
-    @staticmethod
-    def get_friends(user):
-        try:
-            friends = Friends.objects.get(owner=user).friends
-            return friends
-        except:
-            return {}
-    
-    @staticmethod
-    def add_friend(user, friend):
-        friends_dict = Friends.get_friends(user)
-        friends_dict[friend.id] = friend.get_data['name']
-        user.save()
-        
-    @staticmethod
-    def change_friend_name(user, friend, new_name):
-        friends_dict = user.friends
-        friends_dict[friend.id] = new_name
-        user.save()
-        
-    @staticmethod
-    def remove_friend(user, friend):
-        friends_dict = user.friends
-        friends_dict.pop(friend.id)
-        user.save()
-        
-        
+          
 class Message(models.Model):
     sender = models.ForeignKey(MyUser, related_name='sent_messages', on_delete=models.CASCADE)
     receiver = models.ForeignKey(MyUser, related_name='receieved_messages', on_delete=models.CASCADE)
     message = models.TextField()
+    image = models.ImageField(upload_to='static/message_images/', null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     
     @staticmethod

@@ -22,11 +22,12 @@ class MyUserCreationForm(UserCreationForm):
         model = MyUser
         fields = ('first_name', 'last_name', 'phone', 'email', 'password1', 'password2')
 
+
 class MyUserChangeForm(UserChangeForm):
-        
     class Meta:
-        models = MyUser, UserProfilePic,
+        models = MyUser, UserProfilePic
         fields = ('profile_picture', 'first_name', 'last_name', 'phone', 'email')
+
 
 class MyUserLoginForm(AuthenticationForm):
     username = forms.CharField(label='Phone/Email:', max_length=50, required=True,
@@ -39,10 +40,13 @@ class MyUserLoginForm(AuthenticationForm):
                                                                  'placeholder': 'Password',
                                                                 }))
     
+    
 class AddProfilePicForm(forms.ModelForm):
-    profile_picture = forms.ImageField(label=('Profile Picture:'), required=False, 
+    profile_picture = forms.ImageField(label=('Profile Picture:'), 
+                                       required=False, 
                                        widget=forms.FileInput())
     
     class Meta:
         model = UserProfilePic
         fields = ('profile_picture',)
+        widgets = {'user': forms.HiddenInput()}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/friends.css' %}">
+<section class="invitation-section">
+    <div class="invitation-container">
+        <h2>Friend Requests</h2>
+        <div class="invitation-box">
+            {% for request in friend_requests %}
+            <article class="invitation" id="invitation-container">
+                <div class="user-details">
+                    <figure class="user-image" id="user-image">
+                        <img class="user-img" src="{{ request.sender.picture }}" alt="User Image">
+                    </figure>
+                    <div class="user-name" id="user-name">
+                        <h3> {{ request.sender.name }} </h3>
+                    </div>
+                </div>
+                <div class="invitation-actions">
+                    <button type="button" class="btn accept">Accept</button>
+                    <button type="button" class="btn decline">Decline</button>
+                </div>
+            </article>
+            {% endfor %}
+            
+        </div>
+    </div>
+</section>
+{% endblock %}

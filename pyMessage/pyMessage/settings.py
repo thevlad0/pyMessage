@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     
     'channels',
     'accounts',
-    'gui',
+    'friend',
     'messaging',
+    'api',
 ]
 
 AUTH_USER_MODEL = 'accounts.MyUser'
@@ -132,8 +133,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-MEDIA_URL = '/pyMessage/static/media/'
-MEDIA_ROOT = BASE_DIR / '/pyMessage/static/media'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
