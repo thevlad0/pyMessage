@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Protest+Riot&display=swap');
+
+body {
+    font-family: 'Protest Riot', sans-serif;
+    background: #3D7EAA; 
+    background: -webkit-linear-gradient(to bottom, #FFE47A, #366E9C);
+    background: linear-gradient(to bottom, #FFE47A, #366E9C);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+.avatar {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+}
+
+.login-form form {
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input[type="text"],
+.input-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input-group input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.btn-signin {
+    background-color: #366E9C;
+    color: white;
+    padding: 10px;
+    border: none;
+    width: 107%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'Protest Riot', sans-serif;
+    font-size: 1rem;
+}
+
+.btn-signin:hover {
+    background-color: #FFE47A;
+}
+
+.links {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.links a {
+    text-decoration: none;
+    color: #3D7EAA;
+    margin: 5px 5px;
+    text-align: left;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}

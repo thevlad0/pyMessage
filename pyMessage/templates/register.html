@@ -3,15 +3,20 @@
 {% load static %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <div class='form_container'>
-        <h2>Register</h2>
-        <form method='POST'>
-            {% csrf_token %}
-            {{ form }}
-            <button class='submit', type='submit'>
-                Register
-            </button>
-        </form>
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <div class="form-container">
+        <div class="form-card">
+            <img src="https://www.svgrepo.com/show/376344/python.svg" alt="Avatar" class="avatar">
+            <form method="post">
+                <div class="input-group">
+                    {% csrf_token %}
+                    {{ form }}
+                </div>
+                <button type="submit" class="btn-submit">Register</button>
+                <div class="links">
+                    <a href="login">Already have an account?</a>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}
