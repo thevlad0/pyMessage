@@ -1,9 +1,9 @@
-import json
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from .managers import MyUserManager
 from friend.models import Friends, FriendRequest
+from messaging.models import Message
 
 # Create your models here.
 DEFAULT_PROFILE_PIC = 'profile_pictures/default.jpg'
@@ -32,6 +32,7 @@ class MyUser(AbstractUser):
     
     def get_data(self):
         return {
+            'id': self.id,
             'name': self.name,
             'username': self.username,
             'picture' : self.profile_picture,
@@ -84,17 +85,23 @@ class MyUser(AbstractUser):
         FriendRequest.decline_request(self, request)
         
     def search(self, filter_text):
-        if filter_text is None:
-            return json.dumps([user.get_data() for user in MyUser.objects.all()])
-        else:
-            users = MyUser.objects.filter(
-                models.Q(first_name__icontains=filter_text) |
-                models.Q(last_name__icontains=filter_text) |
-                models.Q(phone__icontains=filter_text) |
-                models.Q(email__icontains=filter_text)
-            )
+        users = MyUser.objects.filter(
+            models.Q(first_name__icontains=filter_text) |
+            models.Q(last_name__icontains=filter_text) |
+            models.Q(phone__icontains=filter_text)
+        ).values_list('id', flat=True)
         
-        return json.dumps([user.get_data() for user in users])   
+        sent_requests = self.get_requests() | self.get_sent_requests()
+        friends = self.get_friends()
+        blocked = self.get_blocked()
+        
+        return [user for user in users 
+                if str(user) not in sent_requests
+                and str(user) not in friends 
+                and str(user) not in blocked]
+    
+    def get_messages(self, other):
+        return Message.get_messages(self, other)
     
     def __str__(self):
         return str(self.phone)

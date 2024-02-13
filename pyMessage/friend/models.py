@@ -26,19 +26,19 @@ class Friends(models.Model):
     @staticmethod
     def add_friend(user, friend):
         friends_dict = Friends.get_friends(user)
-        friends_dict[friend.id] = friend.get_data['name']
-        try:
-            Friends.objects.filter(owner=user).update(friends={friend.id: friend.get_data['name']})
-        except:
-            Friends.objects.create(owner=user, friends=friends_dict, blocked={})
+        friends_dict[friend.id] = friend.get_data()['name']
     
+        found = Friends.objects.filter(owner=user).update(friends=friends_dict)
+        if not found:
+            Friends.objects.create(owner=user, friends=friends_dict, blocked={})
+            
     def add_blocked(user, to_block):
         blocked_dict = Friends.get_blocked(user)
-        blocked_dict[to_block.id] = to_block.get_data['name']
-        try:
-            Friends.objects.filter(owner=user).update(blocked=blocked_dict)
-        except:
-            Friends.objects.create(owner=user, friends={}, blocked={to_block.id: to_block.get_data['name']})
+        blocked_dict[to_block.id] = to_block.get_data()['name']
+        
+        found = Friends.objects.filter(owner=user).update(blocked=blocked_dict)
+        if not found:
+            Friends.objects.create(owner=user, friends={}, blocked=blocked_dict)
         
     @staticmethod
     def add_nickname(user, friend, new_name):
@@ -70,11 +70,11 @@ class FriendRequest(models.Model):
         
     @staticmethod
     def accept_request(request):
-        sender = request.sender
-        receiver = request.receiver
-        Friends.add_friend(sender, receiver)
-        Friends.add_friend(receiver, sender)
-        FriendRequest.objects.get(id=request.id).delete()
+        request_info = FriendRequest.objects.get(id=request)
+        Friends.add_friend(request_info.sender, request_info.receiver)
+        Friends.add_friend(request_info.receiver, request_info.sender)
+        FriendRequest.objects.get(id=request).delete()
+        return request_info
         
     @staticmethod
     def decline_request(request):
@@ -82,11 +82,11 @@ class FriendRequest(models.Model):
         
     @staticmethod
     def get_requests(user):
-        return FriendRequest.objects.filter(receiver=user)
+        return FriendRequest.objects.filter(receiver=user).values_list('id', flat=True)
     
     @staticmethod
     def get_sent_requests(user):
-        return FriendRequest.objects.filter(sender=user)
+        return FriendRequest.objects.filter(sender=user).values_list('id', flat=True)
     
     @staticmethod
     def remove_request(request):
@@ -97,5 +97,5 @@ class FriendRequest(models.Model):
             'id': self.id,
             'sender': self.sender.get_data(),
             'receiver': self.receiver.get_data(),
-            'date': self.date
+            'date': str(self.date)
         }
