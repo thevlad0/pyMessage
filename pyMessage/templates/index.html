@@ -1,46 +1,78 @@
 {% extends "base.html" %}
 
-
 {% load static %}
 {% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}">
-<div class="section-container">
-    <section class="friends-section" id="friends-section">
-        <h1>Chats</h1>
-        <input class="search" id="search" type="text" placeholder="Find your friend!!!">
-        <div class="container" id="container">
-            {% for friend in friends %}
-            <div class="friend-container" id="friend-container">
-                <div class="user-image" id="user-image">
-                    <img class="userImg" src="{{ friend.picture }}" alt="">
-                </div>
-                <div class="user-image" id="user-name">
-                    <h3>{{ friend.name }}</h3>
-                    <p class="message">That shows last mesage!!!</p>
-                </div>
-            </div>
-            {% endfor %}
+<body class="bg-blue-200 font-sans">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="bg-blue-500 w-80 p-6">
+      <input type="text" placeholder="Search Here..." class="rounded-full py-2 px-4 w-full mb-6" id='search'>
+      <ul class="friendContainer">
+        <!-- ... Other contacts ... -->
+      </ul>
+    </div>
+    <!-- Chat Section -->
+    <div class="flex-1 flex flex-col bg-white">
+      <div class="p-6 border-b border-gray-300 flex justify-between items-center">
+        <h2 class="text-2xl font-semibold">Elizabeth Nelson</h2>
+        <div>
+          <i class="fas fa-phone fa-flip-horizontal text-gray-600 mr-4"></i>
+          <i class="fas fa-video text-gray-600"></i>
         </div>
-    </section>
-    <section class="chat-section" id="chat-section">
-        <div class="chat-buttons-container" id="chat-buttons-container">
-            <div class="chat-buttons" id="chat-buttons">
-                <input type="text" placeholder="Type something!">
-            </div>
+      </div>
+      <div class="flex-1 p-6 overflow-y-auto" id="chat-box">
+        <!-- Repeated for each message -->
+        <!-- ... Other messages ... -->
+      </div>
+      <div class="p-6 border-t border-gray-300">
+        <input type="text" placeholder="Type your message here..." class="rounded-full py-2 px-4 w-full" id="message-input">
+      </div>
+    </div>
+    <!-- Profile Section -->
+    <div class="w-64 p-6">
+      <div class="flex items-center mb-6">
+        <img class="rounded-full h-20 w-20 mr-3" src="{{ user.picture }}" alt="Profile picture of Elizabeth Nelson">
+        <div>
+          <p class="text-lg font-semibold">{{ user.name }}</p>
+          <p class="text-sm text-gray-600">Founder, Anv 'Bochamity'</p>
         </div>
-    </section>
-    <section class="options-section" id="options-section">
-        <div class="options-container">
-            <div class="user-image-options">
-                <img class="userImg" src="{{ user.picture }}" alt="">
-                <h3>{{ user.name }}</h3>
-            </div>
+      </div>
+      <div class="mb-6">
+        <p class="text-sm text-gray-600 mb-1">Manchester, England</p>
+        <p class="text-sm text-gray-600 mb-1">999-999-999</p>
+        <p class="text-sm text-gray-600">elizabeth@avn.com</p>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold mb-3">Media</h3>
+        <div class="flex -mx-1">
+          <!-- Repeated for each media item -->
+          <img class="rounded-full h-16 w-16 mx-1" src="/randomguy.jpg" alt="Media image of Elizabeth">
+          <!-- ... Other media images ... -->
         </div>
-    </section>
-</div>
+      </div>
+      <div class="mt-6">
+        <a href="friends/requests" class="block text-black font-semibold mb-4">Friend requests</a>
+        <a href="friends/blocked" class="block text-black font-semibold mb-4">Blocked accounts</a>
+        <a href="profile/edit" class="block text-black font-semibold mb-4">Edit Profile</a>
+        <div class="absolute bottom-0 right-0 p-6">
+          <a href="logout" class="text-white font-semibold">
+            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16" transform="scale(-1, 1)">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
 
-<script src="{% static 'js/chat.js' %}"></script>
+{{user.id|json_script:"user_id"}}
+
 <script src="{% static 'js/search.js' %}"></script>
+<script src="{% static 'js/chat.js' %}"></script>
 
 {% endblock %}
