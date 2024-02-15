@@ -1,6 +1,7 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from accounts.models import MyUser
 from messaging.models import Message
+from friend.models import FriendRequest
 import json
 
 # Create your views here.
@@ -28,35 +29,48 @@ def get_blocked_users(request):
 def get_messages(request, user_id):
     messages_data = request.user.get_messages(user_id)
     messages = json.dumps([
-        Message.objects.get(id=message_id) for message_id in messages_data
+        Message.objects.get(id=message_id).get_info() for message_id in messages_data
     ])
     return JsonResponse(messages, safe=False)
+
+def get_last_message(request, user_id):
+    messages_data = request.user.get_messages(user_id)
+    last_message = json.dumps(
+        Message.objects.get(id=messages_data[::-1][0]).get_info()
+        )
+    return JsonResponse(last_message, safe=False)
 
 def get_friend_requests(request):
     friend_requests = request.user.get_requests()
     requests = json.dumps([
-        MyUser.objects.get(id=request).get_data() for request in friend_requests
+        FriendRequest.objects.get(id=request).get_info() for request in friend_requests
     ])
     return JsonResponse(requests, safe=False)
     
 def remove_friend(request, friend_id):
     friend = MyUser.objects.get(id=friend_id)
     request.user.remove_friend(friend)
+    return HttpResponse('Friend removed successfully.')
     
 def add_blocked(request, to_block_id):
     to_block = MyUser.objects.get(id=to_block_id)
     request.user.add_blocked(to_block)
+    return HttpResponse('User blocked successfully.')
     
 def remove_blocked(request, to_unblock_id):
     to_unblock = MyUser.objects.get(id=to_unblock_id)
     request.user.remove_blocked(to_unblock)
+    return HttpResponse('User unblocked successfully.')
     
 def send_request(request, to_user_id):
     to_user = MyUser.objects.get(id=to_user_id)
     request.user.send_request(to_user)
+    return HttpResponse('Friend request sent successfully.')
     
 def accept_request(request, request_id):
     request.user.accept_request(request_id)
+    return HttpResponse('Friend request accepted successfully.')
     
 def decline_request(request, request_id):
     request.user.decline_request(request_id)
+    return HttpResponse('Friend request declined successfully.')

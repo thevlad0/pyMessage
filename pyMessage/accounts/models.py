@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from .managers import MyUserManager
 from friend.models import Friends, FriendRequest
-from messaging.models import Message
+from messaging.models import Message, OnlineStatus
 
 # Create your models here.
 DEFAULT_PROFILE_PIC = 'profile_pictures/default.jpg'
@@ -35,7 +35,11 @@ class MyUser(AbstractUser):
             'id': self.id,
             'name': self.name,
             'username': self.username,
+            'phone': str(self.phone),
+            'email': self.email if self.email is not None else '',
             'picture' : self.profile_picture,
+            'status': 'online' if OnlineStatus.objects.filter(user=self)
+            .values_list('online_status', flat=True) else 'offline'
         }
                 
     def change_info(self, first_name, last_name, email, phone, profile_picture):
@@ -82,7 +86,7 @@ class MyUser(AbstractUser):
         FriendRequest.accept_request(request)
         
     def decline_request(self, request):
-        FriendRequest.decline_request(self, request)
+        FriendRequest.decline_request(request)
         
     def search(self, filter_text):
         users = MyUser.objects.filter(
@@ -101,7 +105,7 @@ class MyUser(AbstractUser):
                 and str(user) not in blocked]
     
     def get_messages(self, other):
-        return Message.get_messages(self, other)
+        return Message.get_messages(self, other).values_list('id', flat=True)
     
     def __str__(self):
         return str(self.phone)

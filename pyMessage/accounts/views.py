@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import MyUserCreationForm, MyUserLoginForm, AddProfilePicForm
 from .utils import *
 from .models import MyUser
+from messaging.models import OnlineStatus
 
 # Create your views here.
 
@@ -12,6 +13,7 @@ def register(request):
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            OnlineStatus.objects.create(user=form.instance)
             login(request, form.instance)
             return redirect('/register/profile_pic')
     else:

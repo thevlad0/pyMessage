@@ -38,7 +38,7 @@ def send_online_status(sender, instance, created, **kwargs):
         
         async_to_sync(channel_layer.group_send)(
             'user', {
-                'type': 'send_onlineStatus',
+                'type': 'send_online_status',
                 'value': json.dumps(data)
             }
         )

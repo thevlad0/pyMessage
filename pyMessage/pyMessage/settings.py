@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'channels',
+    
     'accounts',
     'friend',
     'messaging',
@@ -75,8 +76,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'pyMessage.wsgi.application'
-ASGI_APPLICATION = 'pyMessage.routing.application'  # Add this line for Django Channels
+ASGI_APPLICATION = 'pyMessage.asgi.application'  # Add this line for Django Channels
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

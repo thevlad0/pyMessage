@@ -25,11 +25,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         
+        print(data)
+        
         message = data['message']
         user = data['user']
         receiver = data['receiver']
-
-        await self.save_message(user, self.room_group_name, message, receiver)
+        
+        await self.save_message(user, message, receiver)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -49,15 +51,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }))
 
     async def disconnect(self, code):
-        self.channel_layer.group_discard(
+        await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
 
     @database_sync_to_async
-    def save_message(self, user, thread_name, message, receiver):
+    def save_message(self, user_data, message, receiver_data):
+        user = MyUser.objects.get(id=user_data)
+        receiver = MyUser.objects.get(id=receiver_data)
         chat = Message.objects.create(
-            sender=user, message=message, thread_name=thread_name)
+            sender=user, message=message, receiver=receiver)
         other_user_id = self.scope['url_route']['kwargs']['id']
         other = MyUser.objects.get(id=other_user_id)
         if receiver == other:
@@ -104,12 +108,12 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
         connection_type = data['type']
         await self.change_online_status(user, connection_type)
 
-    async def send_onlineStatus(self, event):
+    async def send_online_status(self, event):
         data = json.loads(event.get('value'))
         user = data['user']
         online_status = data['status']
         await self.send(text_data=json.dumps({
-            'user':user,
+            'user': user,
             'online_status': online_status
         }))
 
@@ -123,7 +127,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def change_online_status(self, user_id, c_type):
         userprofile = OnlineStatus.objects.get(user=user_id)
-        if c_type == 'open':
+        if c_type == 'online':
             userprofile.online_status = True
             userprofile.save()
         else:

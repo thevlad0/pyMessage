@@ -78,7 +78,7 @@ class FriendRequest(models.Model):
         
     @staticmethod
     def decline_request(request):
-        FriendRequest.objects.get(id=request.id).delete()
+        FriendRequest.objects.get(id=request).delete()
         
     @staticmethod
     def get_requests(user):
@@ -87,10 +87,6 @@ class FriendRequest(models.Model):
     @staticmethod
     def get_sent_requests(user):
         return FriendRequest.objects.filter(sender=user).values_list('id', flat=True)
-    
-    @staticmethod
-    def remove_request(request):
-        FriendRequest.objects.get(id=request.id).delete()
         
     def get_info(self):
         return {

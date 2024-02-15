@@ -16,6 +16,15 @@ class Message(models.Model):
             Message.objects.filter(sender=other, receiver=user)
             ).order_by('date')
         
+    def get_info(self):
+        return {
+            'id': self.id,
+            'sender': self.sender.id,
+            'receiver': self.receiver.id,
+            'message': self.message,
+            'date': str(self.date)
+        }
+        
         
 class OnlineStatus(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
