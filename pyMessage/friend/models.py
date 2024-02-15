@@ -41,21 +41,15 @@ class Friends(models.Model):
             Friends.objects.create(owner=user, friends={}, blocked=blocked_dict)
         
     @staticmethod
-    def add_nickname(user, friend, new_name):
-        friends_dict = Friends.get_friends(user)
-        friends_dict[friend.id] = new_name
-        Friends.objects.filter(owner=user).update(friends=friends_dict)
-        
-    @staticmethod
     def remove_friend(user, friend):
         friends_dict = user.friends
-        friends_dict.pop(friend.id)
+        friends_dict.pop(str(friend.id))
         Friends.objects.filter(owner=user).update(friends=friends_dict)
     
     @staticmethod
     def remove_blocked(user, to_unblock):
         blocked_dict = Friends.get_blocked(user)
-        blocked_dict.pop(to_unblock.id)
+        blocked_dict.pop(str(to_unblock.id))
         Friends.objects.filter(owner=user).update(blocked=blocked_dict)
         
 

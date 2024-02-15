@@ -29,14 +29,14 @@ socket.onclose = function(e){
 
 socket.onmessage = function(e){
     var data = JSON.parse(e.data)
-    console.log(data);
+    console.log(data)
     if(data.user !== logged_in_user){
-        var ball_status = document.querySelector(`#${data.user}-ball-status`)
-        console.log(ball_status);
+        console.log(data.user)
+        var ball_status = document.querySelector(`#ball-status-${data.user}`);
         if(data.online_status === true){
-            ball_status.style.backgroundColor = 'green'
+            ball_status.style.color = 'green'
         }else{
-            ball_status.style.backgroundColor = 'grey'
+            ball_status.style.color = 'grey'
         }
     }
 }

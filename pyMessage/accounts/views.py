@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import MyUserCreationForm, MyUserLoginForm, AddProfilePicForm
 from .utils import *
-from .models import MyUser
+from .models import MyUser, UserProfilePic
 from messaging.models import OnlineStatus
 
 # Create your views here.
@@ -31,6 +31,24 @@ def profile_pic(request):
         form = AddProfilePicForm()
         
     return render(request, 'profile_pic.html', {'form': form})
+
+def edit(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone = parse_phone_number(request.POST.get('phone'))
+        
+        form = AddProfilePicForm(request.POST, request.FILES)
+        form.instance.user = request.user
+        if form.is_valid():
+            UserProfilePic.objects.filter(user=request.user).delete()
+            request.user.change_info(first_name, last_name, email, phone)
+            form.save()
+            return redirect('/')
+        
+    form = AddProfilePicForm()
+    return render(request, 'edit.html', {'form': form})
 
 def login_view(request):
     if request.method == "POST":

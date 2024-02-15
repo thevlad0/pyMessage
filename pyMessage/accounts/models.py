@@ -38,19 +38,17 @@ class MyUser(AbstractUser):
             'phone': str(self.phone),
             'email': self.email if self.email is not None else '',
             'picture' : self.profile_picture,
-            'status': 'online' if OnlineStatus.objects.filter(user=self)
-            .values_list('online_status', flat=True) else 'offline'
+            'status': 'online' if int(OnlineStatus.objects.filter(user=self)
+            .values_list('online_status', flat=True)[0]) else 'offline'
         }
                 
-    def change_info(self, first_name, last_name, email, phone, profile_picture):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.phone = phone
-        
-        UserProfilePic.objects.filter(user=self).update(profile_picture=profile_picture)
-        
-        self.save()
+    def change_info(self, first_name, last_name, email, phone):
+        MyUser.objects.filter(id=self.id).update(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone=phone
+        )
         
     def get_friends(self):
         return Friends.get_friends(self)
@@ -63,9 +61,6 @@ class MyUser(AbstractUser):
         
     def add_blocked(self, to_block):    
         Friends.add_blocked(self, to_block)
-        
-    def add_nickname(self, friend, new_name):
-        Friends.add_nickname(self, friend, new_name)
         
     def remove_friend(self, friend):
         Friends.remove_friend(self, friend)
@@ -95,14 +90,17 @@ class MyUser(AbstractUser):
             models.Q(phone__icontains=filter_text)
         ).values_list('id', flat=True)
         
-        sent_requests = self.get_requests() | self.get_sent_requests()
+        got_requests = self.get_requests().values_list('sender')
+        sent_requests = self.get_sent_requests().values_list('receiver')
         friends = self.get_friends()
         blocked = self.get_blocked()
         
         return [user for user in users 
-                if str(user) not in sent_requests
+                if str(user) not in got_requests
+                and str(user) not in sent_requests
                 and str(user) not in friends 
-                and str(user) not in blocked]
+                and str(user) not in blocked
+                and str(user) != str(self.id)]
     
     def get_messages(self, other):
         return Message.get_messages(self, other).values_list('id', flat=True)

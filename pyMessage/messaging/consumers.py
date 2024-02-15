@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Message, Notification, OnlineStatus
+from .models import Message, OnlineStatus, Notification
 from accounts.models import MyUser
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -24,8 +24,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
-        
-        print(data)
         
         message = data['message']
         user = data['user']
@@ -65,18 +63,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
         other_user_id = self.scope['url_route']['kwargs']['id']
         other = MyUser.objects.get(id=other_user_id)
         if receiver == other:
-            Notification.objects.create(chat=chat, user=other)
+            Notification.objects.create(user_from=user, user_to=receiver)
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        my_id = self.scope['user'].id
-        self.room_group_name = f'{my_id}'
+        self.room_group_name = 'notify'
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
         
         await self.accept()
+        
+    async def receive(self, text_data=None, bytes_data=None):
+        data = json.loads(text_data)
+        user = data['user']
+        receiver = data['receiver']
+        
+        await self.change_notification_status(user, receiver)
+        await self.send(json.dumps({
+            'user': receiver,
+            'count': 0
+        }))
 
     async def disconnect(self, code):
         self.channel_layer.group_discard(
@@ -86,10 +94,19 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def send_notification(self, event):
         data = json.loads(event.get('value'))
+        user = data['user']
         count = data['count']
         await self.send(text_data=json.dumps({
+            'user': user,
             'count': count
         }))
+        
+    @database_sync_to_async
+    def change_notification_status(self, user_id, receiver_id):
+        print(user_id, receiver_id)
+        for notification in Notification.objects.filter(user_from=receiver_id, user_to=user_id, is_seen=False):
+            notification.is_seen = True
+            notification.save()
         
         
 class OnlineStatusConsumer(AsyncWebsocketConsumer):

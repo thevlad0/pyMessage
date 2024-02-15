@@ -1,10 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Upload Profile Picture</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Upload</button>
-</form>
-{% endblock %}
+<body class="bg-gradient-to-b from-yellow-400 to-blue-800 font-sans">
+    <div class="flex justify-center items-center h-screen">
+      <div class="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-md">
+        <div class="p-8 w-96">
+          <h1 class="text-2xl font-semibold text-black-800 mb-4">Upload Profile Picture</h1>
+          <form method='post' enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-4">
+              {{ form.as_p }}
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-blue-800 text-white py-2 px-4 rounded-md hover:bg-yellow-400 focus:outline-none focus:bg-blue-600">
+                    Upload
+                </button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %} 

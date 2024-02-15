@@ -1,5 +1,7 @@
+import { notify } from "./notifications.js";
+
+const container = document.querySelector("#chat-box");
 function createMessage(float_direction, color, message) {
-    const container = document.querySelector("#chat-box");
     
     const flexDiv = document.createElement('div');
     flexDiv.classList.add('flex', 'items-end', 'mb-4', 'clear-both', float_direction);
@@ -13,6 +15,33 @@ function createMessage(float_direction, color, message) {
     nestedDiv.appendChild(paragraph);
     flexDiv.appendChild(nestedDiv);
     container.appendChild(flexDiv);
+}
+
+export function blockOnPress(object) {
+    let objects = document.querySelectorAll('.friendContainer li');
+    objects.forEach(object => {
+        object.classList.remove('bg-yellow-500');
+        object.classList.add('bg-blue-500');
+        object.disabled = false;
+    });
+
+    object.addEventListener('click', async () => {
+        object.classList.remove('bg-blue-500');
+        object.classList.add('bg-yellow-500');
+        object.disabled = true;
+    });
+}
+
+function clickNotificationBadge(object, user_id, receiver) {
+    //Add notification badge here
+    object.addEventListener('click', async () => {
+        console.log('hello');
+        notify.send(JSON.stringify({
+            'user': user_id,
+            'receiver': receiver,
+            'type': 'read'
+        }));
+    });
 }
 
 export function addChatOption(object, user_id, name) {
@@ -31,9 +60,12 @@ export function addChatOption(object, user_id, name) {
             );
 
             const up_part = document.querySelector('#chat-user');
-            const ball_status = object.querySelector('p');
-            up_part.innerHTML = ball_status.innerHTML;
+            const ball_status = object.querySelector(`#ball-status-${receiver}`);
+            up_part.innerHTML = name + " " + ball_status.outerHTML;
 
+            clickNotificationBadge(object, id, receiver);
+
+            container.innerHTML = '';
             JSON.parse(data).forEach(message => {
                 if(message.sender === receiver){
                     createMessage('float-left', 'bg-yellow-500', message.message);
@@ -62,11 +94,15 @@ export function addChatOption(object, user_id, name) {
                     createMessage('float-left', 'bg-yellow-500', data.message);
                 }
 
-                docu
+                const change_last_message = document.querySelector(`#last-message-${receiver}`);
+                if(data.user === id) {
+                    change_last_message.innerHTML = `You: ${data.message}`;
+                } else {
+                    change_last_message.innerHTML = `${data.message}`;
+                }
             }
 
             const message_input = document.querySelector('#message-input');
-            console.log(message_input);
 
             document.querySelector('#message-input-confirm').onclick = function(e){
                 const message = message_input.value;

@@ -33,7 +33,7 @@ function populateBlocked(user_data) {
         removeButton.textContent = 'Remove blocked';
 
         removeButton.addEventListener('click', async () => {
-            let remove = await fetch(`/api/friends/remove_blocked/${request.id}/`)
+            let remove = await fetch(`/api/friends/remove_blocked/${user.id}/`)
             console.log(remove);
             buttonSection.innerHTML = "";
             buttonSection.appendChild(document.createTextNode("Blocked user removed"));
@@ -46,8 +46,7 @@ function populateBlocked(user_data) {
         userSection.appendChild(userNameSection);
         userNameSection.appendChild(userName);
         article.appendChild(buttonSection);
-        buttonSection.appendChild(acceptButton);
-        buttonSection.appendChild(declineButton);
+        buttonSection.appendChild(removeButton);
     });
 }
 

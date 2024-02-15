@@ -36,8 +36,8 @@ class MyUserCreationForm(UserCreationForm):
 
 class MyUserChangeForm(UserChangeForm):
     class Meta:
-        models = MyUser, UserProfilePic
-        fields = ('profile_picture', 'first_name', 'last_name', 'phone', 'email')
+        model = MyUser
+        fields = ('first_name', 'last_name', 'phone', 'email')
 
 
 class MyUserLoginForm(AuthenticationForm):
@@ -55,7 +55,9 @@ class MyUserLoginForm(AuthenticationForm):
 class AddProfilePicForm(forms.ModelForm):
     profile_picture = forms.ImageField(label=('Profile Picture:'), 
                                        required=False, 
-                                       widget=forms.FileInput())
+                                       widget=forms.FileInput(attrs={
+                                           'class': 'w-full border border-black-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500'
+                                       }))
     
     class Meta:
         model = UserProfilePic

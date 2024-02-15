@@ -10,15 +10,17 @@ from asgiref.sync import async_to_sync
 def send_notification(sender, instance, created, **kwargs):
     if created:
         channel_layer = get_channel_layer()
-        notification_obj = Notification.objects.filter(is_seen=False, user=instance.user).count()
-        user_id = str(instance.user.id)
+        notification_obj = Notification.objects.filter(is_seen=False, user_to=instance.user_to, user_from=instance.user_from).count()
+        user = str(instance.user_from.id)
+        print(user, notification_obj)
         data = {
+            'user': user,
             'count': notification_obj,
         }
 
         async_to_sync(channel_layer.group_send)(
-            user_id, {
-                'type':'send_notification',
+            'notify', {
+                'type': 'send_notification',
                 'value': json.dumps(data)
             }
         )

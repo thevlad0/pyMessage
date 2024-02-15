@@ -26,12 +26,11 @@ class Message(models.Model):
         }
         
         
+class Notification(models.Model):
+    user_from = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='from_user')
+    user_to = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='to_user')
+    is_seen = models.BooleanField(default=False)
+        
 class OnlineStatus(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     online_status = models.BooleanField(default=False)
-    
-    
-class Notification(models.Model):
-    chat = models.ForeignKey(Message, on_delete=models.CASCADE)
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    is_seen = models.BooleanField(default=False)
