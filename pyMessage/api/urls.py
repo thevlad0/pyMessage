@@ -9,6 +9,7 @@ urlpatterns = [
     
     path('messages/<int:user_id>', get_messages),
     path('messages/get_last_message/<int:user_id>/', get_last_message),
+    path('messages/get_notifications/<int:user_id>/', get_notifications),
     
     path('friends/requests/', get_friend_requests),
     path('friends/get_blocked/', get_blocked_users),

@@ -29,9 +29,14 @@ crossorigin="anonymous" referrerpolicy="no-referrer" />
       </div>
       <div class="p-6 border-t border-gray-300">
         <input type="text" placeholder="Type your message here..." class="rounded-full py-2 px-4 w-11/12 inline" id="message-input">
-        <button id="upload-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-full inline items-center">
-          <i class="fa-solid fa-file"></i>
-        </button>
+
+        <div class="relative inline mx-1">
+          <input type="file" id="image-input" accept="image/*" class="opacity-0 absolute w-5 h-10"/>
+          <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded-full inline items-center">
+            <i class="fa-solid fa-file"></i>
+          </div>
+        </div>
+
         <button id="message-input-confirm" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full inline items-center">
           <i class="fas fa-paper-plane text-white-500"></i>
             <path d="M10 3l7 7h-14l7-7z" />

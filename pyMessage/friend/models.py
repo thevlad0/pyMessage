@@ -42,7 +42,7 @@ class Friends(models.Model):
         
     @staticmethod
     def remove_friend(user, friend):
-        friends_dict = user.friends
+        friends_dict = Friends.get_friends(user)
         friends_dict.pop(str(friend.id))
         Friends.objects.filter(owner=user).update(friends=friends_dict)
     

@@ -1,4 +1,5 @@
-import { addChatOption, blockOnPress } from './chat.js';
+import { addChatOption } from './chat.js';
+import { notification_count } from './notifications.js';
 
 const display_last_message = async (object, user) => {
     await fetch(`/api/messages/get_last_message/${user}/`)
@@ -22,7 +23,7 @@ export function populateFriends(users_data) {
     .forEach(user => {
         // Create li element
         var li = document.createElement("li");
-        li.classList.add("flex", "items-center", "mb-4");
+        li.classList.add("flex", "items-center", "mb-4", "clickable");
 
         // Create img element
         var img = document.createElement("img");
@@ -63,10 +64,10 @@ export function populateFriends(users_data) {
         notify_count.classList.add('bg-red-500', 'rounded-full', 'h-4', 'w-4', 'flex', 
         'items-center', 'justify-center', 'text-white', 'text-xs', 'absolute', '-top-1', '-right-1');
         notify_count.setAttribute('id', `notify-status-${user.id}`);
+        notification_count(user.id);
         li.appendChild(notify_count);
 
         addChatOption(li, user.id, user.name);
-        blockOnPress(li);
 
         // Append the li to an existing ul or ol element with id "myList"
         container.appendChild(li);

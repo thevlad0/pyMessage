@@ -17,32 +17,33 @@ function createMessage(float_direction, color, message) {
     container.appendChild(flexDiv);
 }
 
-export function blockOnPress(object) {
-    let objects = document.querySelectorAll('.friendContainer li');
-    objects.forEach(object => {
-        object.classList.remove('bg-yellow-500');
-        object.classList.add('bg-blue-500');
-        object.disabled = false;
-    });
+function createImage(float_direction, image) {
+    const flexDiv = document.createElement('div');
+    flexDiv.classList.add('flex', 'items-end', 'mb-4', 'clear-both', float_direction);
 
-    object.addEventListener('click', async () => {
-        object.classList.remove('bg-blue-500');
-        object.classList.add('bg-yellow-500');
-        object.disabled = true;
-    });
+    const nestedDiv = document.createElement('div');
+    nestedDiv.classList.add('rounded-l-lg', 'rounded-tr-lg', 'px-4', 'py-2', 'text-white');
+
+    const img = document.createElement('img');
+    img.src = image;
+    img.classList.add('w-40', 'h-40', 'rounded-lg');
+
+    nestedDiv.appendChild(img);
+    flexDiv.appendChild(nestedDiv);
+    container.appendChild(flexDiv);
 }
 
 function clickNotificationBadge(object, user_id, receiver) {
-    //Add notification badge here
-    object.addEventListener('click', async () => {
-        console.log('hello');
-        notify.send(JSON.stringify({
-            'user': user_id,
-            'receiver': receiver,
-            'type': 'read'
-        }));
-    });
+    notify.send(JSON.stringify({
+        'user': user_id,
+        'receiver': receiver,
+    }));
 }
+
+function scrollToBottom() {
+    const container = document.querySelector('#chat-box');
+    container.scrollTop = container.scrollHeight;
+  }
 
 export function addChatOption(object, user_id, name) {
     object.addEventListener('click', async () => {
@@ -51,7 +52,7 @@ export function addChatOption(object, user_id, name) {
         await fetch(`/api/messages/${Number(receiver)}`)
         .then(response => response.json())
         .then(data => {
-            const socket = new WebSocket(
+            let socket = new WebSocket(
                 'ws://'
                 + window.location.host
                 + '/ws/chat/'
@@ -68,11 +69,20 @@ export function addChatOption(object, user_id, name) {
             container.innerHTML = '';
             JSON.parse(data).forEach(message => {
                 if(message.sender === receiver){
-                    createMessage('float-left', 'bg-yellow-500', message.message);
+                    if(message.image === '') {
+                        createMessage('float-left', 'bg-yellow-500', message.message);
+                    } else {
+                        createImage('float-left', message.image);
+                    }
                 }else{
-                    createMessage('float-right', 'bg-blue-500', message.message);
+                    if(message.image === '') {
+                        createMessage('float-right', 'bg-blue-500', message.message);
+                    } else {
+                        createImage('float-right', message.image);
+                    }
                 }
             })
+            scrollToBottom();
 
             socket.onopen = function(e) {
                 console.log("CONNECTION ESTABLISHED");
@@ -89,9 +99,17 @@ export function addChatOption(object, user_id, name) {
             socket.onmessage = function(e){
                 const data = JSON.parse(e.data);
                 if(data.user == id){
-                    createMessage('float-right', 'bg-blue-500', data.message);
+                    if(data.type !== 'image') {
+                        createMessage('float-right', 'bg-blue-500', data.message);
+                    } else {
+                        createImage('float-right', data.image);
+                    }
                 }else{
-                    createMessage('float-left', 'bg-yellow-500', data.message);
+                    if(data.type !== 'image') {
+                        createMessage('float-left', 'bg-yellow-500', data.message);
+                    } else {
+                        createImage('float-left', data.image);
+                    }
                 }
 
                 const change_last_message = document.querySelector(`#last-message-${receiver}`);
@@ -100,39 +118,66 @@ export function addChatOption(object, user_id, name) {
                 } else {
                     change_last_message.innerHTML = `${data.message}`;
                 }
+
+                scrollToBottom();
             }
 
             const message_input = document.querySelector('#message-input');
 
+            const fileInput = document.querySelector('#image-input');
             document.querySelector('#message-input-confirm').onclick = function(e){
-                const message = message_input.value;
+                if (fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const base64Image = e.target.result;
 
+                        console.log(base64Image);
+                        // Send the Base64 encoded string through WebSocket
+                        socket.send(JSON.stringify({
+                            'image': base64Image,
+                            'user': id,
+                            'receiver': receiver,
+                            'type': 'image',
+                        }));
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                    fileInput.value = ''
+            }
+
+                const message = message_input.value;
+                if(message === '') {
+                    return;
+                }
                 socket.send(JSON.stringify({
                     'message': message,
                     'user': id,
-                    'receiver': receiver
+                    'receiver': receiver,
+                    'type': 'message'
                 }));
 
                 message_input.value = '';
             }
 
-            message_input.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    
-                    event.preventDefault();
-                    
-                    const message = message_input.value.trim();
+            document.querySelectorAll('.clickable.disabled').forEach(disabledItem => {
+                disabledItem.classList.remove('disabled');
+                disabledItem.classList.remove('bg-yellow-400');
+            });
+    
+            // Then disable the clicked item
+            object.classList.add('disabled');
+            object.classList.add('bg-yellow-400');
+            fileInput.value = ''
 
-                    if(message !== ''){
-                            socket.send(JSON.stringify({
-                                'message': message,
-                                'user': id,
-                                'receiver': receiver
-                            }))
+            let arr = document.querySelectorAll('.clickable')
+            Array.from(arr).filter(item => item !== object).forEach(item => {                
+                item.addEventListener('click', () => {
+                    socket.close();
+                });
+            });
 
-                            message_input.value = '';
-                    }
-                }
+            object.addEventListener('click', () => {
+                preventDefault();
+                addChatOption(object, user_id, name);
             });
         })
     })

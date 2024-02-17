@@ -40,6 +40,10 @@ def get_last_message(request, user_id):
         )
     return JsonResponse(last_message, safe=False)
 
+def get_notifications(request, user_id):
+    notifications = request.user.get_notifications(user_id)
+    return JsonResponse(json.dumps(notifications), safe=False)
+
 def get_friend_requests(request):
     friend_requests = request.user.get_requests()
     requests = json.dumps([

@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+
+from .utils import parse_phone_number
 from .managers import MyUserManager
 from friend.models import Friends, FriendRequest
-from messaging.models import Message, OnlineStatus
+from messaging.models import Message, Notification, OnlineStatus
 
 # Create your models here.
 DEFAULT_PROFILE_PIC = 'profile_pictures/default.jpg'
@@ -30,6 +32,10 @@ class MyUser(AbstractUser):
     def profile_picture(self):
         return UserProfilePic.get_profile_pic(self)
     
+    @property
+    def online_status(self):
+        return OnlineStatus.get_status(self)
+    
     def get_data(self):
         return {
             'id': self.id,
@@ -38,16 +44,15 @@ class MyUser(AbstractUser):
             'phone': str(self.phone),
             'email': self.email if self.email is not None else '',
             'picture' : self.profile_picture,
-            'status': 'online' if int(OnlineStatus.objects.filter(user=self)
-            .values_list('online_status', flat=True)[0]) else 'offline'
+            'status': 'online' if self.online_status else 'offline'
         }
                 
     def change_info(self, first_name, last_name, email, phone):
         MyUser.objects.filter(id=self.id).update(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            phone=phone
+            first_name=first_name if first_name != '' else self.first_name,
+            last_name=last_name if last_name != '' else self.last_name,
+            email=email if email != '' else self.email,
+            phone=parse_phone_number(phone) if phone != '' else self.phone
         )
         
     def get_friends(self):
@@ -104,6 +109,9 @@ class MyUser(AbstractUser):
     
     def get_messages(self, other):
         return Message.get_messages(self, other).values_list('id', flat=True)
+    
+    def get_notifications(self, other):
+        return Notification.get_notifications(self, other)
     
     def __str__(self):
         return str(self.phone)

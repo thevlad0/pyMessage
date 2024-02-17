@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import MyUserCreationForm, MyUserLoginForm, AddProfilePicForm
 from .utils import *
@@ -32,12 +33,13 @@ def profile_pic(request):
         
     return render(request, 'profile_pic.html', {'form': form})
 
+@login_required(login_url='/login')
 def edit(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
-        phone = parse_phone_number(request.POST.get('phone'))
+        phone = request.POST.get('phone')
         
         form = AddProfilePicForm(request.POST, request.FILES)
         form.instance.user = request.user

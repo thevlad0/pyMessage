@@ -22,6 +22,7 @@ class Message(models.Model):
             'sender': self.sender.id,
             'receiver': self.receiver.id,
             'message': self.message,
+            'image': self.image.url if self.image else '',
             'date': str(self.date)
         }
         
@@ -30,7 +31,15 @@ class Notification(models.Model):
     user_from = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='from_user')
     user_to = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='to_user')
     is_seen = models.BooleanField(default=False)
+    
+    @staticmethod
+    def get_notifications(user, other):
+        return Notification.objects.filter(user_from=other, user_to=user, is_seen=False).count()
         
 class OnlineStatus(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     online_status = models.BooleanField(default=False)
+    
+    @staticmethod
+    def get_status(user):
+        return bool(OnlineStatus.objects.filter(user=user).values_list('online_status', flat=True)[0])
