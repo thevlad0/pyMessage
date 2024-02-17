@@ -14,6 +14,7 @@ def get_friends(request):
 
 def search_users(request, filter_text=None):
     found_users = request.user.search(filter_text)
+    print(found_users)
     users = json.dumps([
         MyUser.objects.get(id=user).get_data() for user in found_users
     ])

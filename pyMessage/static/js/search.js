@@ -16,7 +16,7 @@ function searchFriends(users_data) {
         const profilePicture = document.createElement('img');
         profilePicture.classList.add('rounded-full', 'h-10', 'w-10', 'mr-3');
         profilePicture.src = user.picture;
-        profilePicture.alt = 'Profile picture of Richard Hendricks';
+        profilePicture.alt = '';
 
         // Create div for user details
         const userDetailsDiv = document.createElement('div');
@@ -26,14 +26,8 @@ function searchFriends(users_data) {
         userName.classList.add('text-white');
         userName.textContent = user.name;
 
-        // Create message
-        const message = document.createElement('p');
-        message.classList.add('text-blue-200', 'text-sm');
-        message.textContent = 'Sup man, wanna go out?';
-
         // Append elements for user details
         userDetailsDiv.appendChild(userName);
-        userDetailsDiv.appendChild(message);
 
         // Append user details to user div
         userDiv.appendChild(profilePicture);

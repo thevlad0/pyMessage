@@ -76,11 +76,11 @@ class FriendRequest(models.Model):
         
     @staticmethod
     def get_requests(user):
-        return FriendRequest.objects.filter(receiver=user).values_list('id', flat=True)
+        return FriendRequest.objects.filter(receiver=user).values_list('sender', flat=True)
     
     @staticmethod
     def get_sent_requests(user):
-        return FriendRequest.objects.filter(sender=user).values_list('id', flat=True)
+        return FriendRequest.objects.filter(sender=user).values_list('receiver', flat=True)
         
     def get_info(self):
         return {
