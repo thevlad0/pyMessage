@@ -42,4 +42,4 @@ class OnlineStatus(models.Model):
     
     @staticmethod
     def get_status(user):
-        return bool(OnlineStatus.objects.filter(user=user).values_list('online_status', flat=True))
+        return int(OnlineStatus.objects.filter(user=user).values_list('online_status', flat=True)[0])

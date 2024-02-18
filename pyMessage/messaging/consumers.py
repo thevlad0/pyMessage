@@ -52,11 +52,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             user = data['user']
             receiver = data['receiver']
             
-            # Extract the format and encoded data
             format, imgstr = image_data.split(';base64,')
             ext = format.split('/')[-1]
 
-            # Decode the Base64 string
             data = base64.b64decode(imgstr)
             
             file_name = f"received_image{self.scope['user'].id}_{int(time.time())}.{ext}"

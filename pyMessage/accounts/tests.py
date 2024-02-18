@@ -95,6 +95,13 @@ class LoginTestCase(TestCase):
         
         self.assertEqual(response3.status_code, 200)
         
+        response4 = self.client.post(self.login_url, {
+            'username': 'WRONG@gmail.com',
+            'password': PASSWORD,
+        })
+        
+        self.assertNotEqual(response4.status_code, 200)
+        
 class EditTestCase(TestCase):
     def setUp(self):
         self.client = Client()

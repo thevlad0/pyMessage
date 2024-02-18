@@ -95,12 +95,12 @@ class MyUser(AbstractUser):
             models.Q(phone__icontains=filter_text)
         ).values_list('id', flat=True)
         
-        got_requests = list(self.get_requests())
-        sent_requests = list(self.get_sent_requests())
+        got_requests = self.get_requests().values_list('sender', flat=True)
+        sent_requests = self.get_sent_requests().values_list('receiver', flat=True)
         friends = self.get_friends()
         blocked = self.get_blocked()
         
-        return [user for user in users 
+        return [int(user) for user in users 
                 if user not in got_requests
                 and user not in sent_requests
                 and str(user) not in friends 
